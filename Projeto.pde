@@ -1,6 +1,6 @@
 //Variaveis
 import processing.sound.*; 
-PImage leafImage;
+PImage leafImage, bgImage, currentBg;
 float posX, posY;
 color frontl, ambl, subSphere;
 
@@ -9,20 +9,27 @@ void setup() {
   //fullScreen(P2D, 1);
   size(720, 600, P2D);
   frameRate(25);
-  background(255);
   
   frontl = color(255, 250, 240);
   ambl = color(0, 11, 31);
   subSphere = color(255, 249, 71);
   
-  leafImage = loadImage("leaf.png");
+  leafImage = loadImage("green_leaf.png");
+  bgImage = loadImage("green_plain.jpg");  
 }
 
-void draw() {
+void draw() {  
+  //background estatico
+  tint(255);  
+  background(255);
+  //image(bgImage, 0, 0, width, height);
+  noTint();
+  
   //ambientLight(255, 255, 255);
   //ambient(red(ambl), green(ambl), blue(ambl));
+  /*
   if (darkMode) {
-    background(0, 25);
+     background(0, 25);
     fill(255);
     stroke(frontl, 0);
     ellipse(600, 40, 45, 45);
@@ -31,9 +38,10 @@ void draw() {
     fill(subSphere);
     stroke(frontl, 0);
     ellipse(600, 40, 45, 45);
-  }
+  }*/
   
   strokeWeight(2);
+  
   if (blur) {
     filter(BLUR, 1);
   }
@@ -48,9 +56,9 @@ void draw() {
     flower.drawRoot();
   }
   
-  /*
+  
   for (Plant plant : plants) {
     plant.drawRootTrail();
-  }*/
+  }
   
 }

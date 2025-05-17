@@ -2,10 +2,11 @@ class Flower {
   PVector rootPos;
   ArrayList<PVector> flowerPath;
   float rootLength, growthSpeed, maxLength, flowerGrowthSpeed;
+  int petalCount, petalSize;
   boolean growing;
-  color leafColor;
+  color rootColor, petalColor, centerpieceColor;
   
-  Flower(float x, float y) {
+  Flower(float x, float y, color flowerRoot, color leafColor1, color leafColor2) {
     rootPos = new PVector(x, y);
     flowerPath = new ArrayList<PVector>();
     flowerPath.add(rootPos.copy());
@@ -14,13 +15,11 @@ class Flower {
     maxLength = random(10, 20);
     flowerGrowthSpeed = random(0.3, 1);
     growing = true;
-    color[] colors = {
-      color(60, 194, 60),
-      color(108, 189, 108),
-      color(9, 107, 9),
-      color(89, 201, 92)
-    };
-    leafColor = colors[int(random(colors.length))];
+    rootColor = flowerRoot;
+    petalColor = leafColor1;
+    centerpieceColor = leafColor2;
+    petalCount = int(random(6, 13));
+    petalSize = int(random(10, 16));
   }
   
   
@@ -29,7 +28,7 @@ class Flower {
     Esta função vai buscar as coordenadas de cada ponto guardado no array da raiz (flowerPath)
     e desenha uma linha com essas coordenadas
     */
-    stroke(60, 194, 60, 200);
+    stroke(rootColor, 200);
     strokeWeight(4);
     
     //Iterar sobre o array para desenhar a raiz com as posicoesS
@@ -37,7 +36,7 @@ class Flower {
       PVector position0 = flowerPath.get(i - 1);
       PVector position1 = flowerPath.get(i);
       line(position1.x, position1.y, position0.x, position0.y);
-    }
+    }   
   }
   
   void updateRoot() {
@@ -60,7 +59,7 @@ class Flower {
       float dy = sin(angle) * rootLength;
       flowerPath.add(new PVector(lastPathPoint.x + dx, lastPathPoint.y + dy));
     } else {
-    drawFlower();
+      drawFlower();
   } }
 
   void drawFlower() {
@@ -72,25 +71,31 @@ class Flower {
     translate(rootTip.x, rootTip.y);
     
     //petalas
-    fill(255, 200, 0);
-    stroke(200, 150, 0);
-    int petals = 6; //adaptar para ser aleatorio
+    fill(petalColor);
+    stroke(petalColor);
     
-    for (int i = 0; i < petals; i++){
-      float petalAngle = TWO_PI / petals * i;
+    for (int i = 0; i < petalCount; i++){
+      float petalAngle = TWO_PI / petalCount * i;
       float petalX = cos(petalAngle) * 10;
       float petalY = sin(petalAngle) * 10;
       pushMatrix();
       translate(petalX, petalY);
       rotate(petalAngle + PI/2);
-      ellipse(0, 0, 8, 16);
+      
+      beginShape();
+      vertex(0, 0);
+      bezierVertex(8, -8, 16, 0, 8, 8);
+      bezierVertex(16, 0, 8, -8, 0, 0);
+      endShape();
+      
       popMatrix();
     }
     
     //centro da flor
-    fill(100, 50, 0);
-    stroke(50);
+    fill(centerpieceColor);
+    stroke(centerpieceColor);
     ellipse(0, 0, 10, 10);
     popMatrix();
+
   }  
 }
