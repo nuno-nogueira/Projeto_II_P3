@@ -4,11 +4,21 @@ PImage leafImage, bgImage, currentBg;
 float posX, posY;
 int lastLeafTime = 0, leafInterval = 1000;
 
+SoundFile soundFile;
+Amplitude amp;
+AudioIn in;
+
 void setup() {
   //Iniciar janela e atributos de janela
   //fullScreen(P2D, 1);
   size(720, 600, P2D);
   frameRate(25);
+  
+  soundFile = new SoundFile(this, "birdsSound.wav");
+  soundFile.loop();
+  
+  amp = new Amplitude(this);
+  amp.input(soundFile);
   
   leafImage = loadImage("green_leaf.png");
   bgImage = loadImage("green_plain.jpg");  
@@ -21,6 +31,11 @@ void draw() {
   //background(255, 5);
   
   image(currentBg, 0, 0, width, height);
+  
+  float volume = amp.analyze();
+  float direction = map(mouseX, 0, width, -1.0, 1.0);
+  soundFile.pan(direction);
+  
 
 
    // Atualiza e desenha as árvores
@@ -58,7 +73,7 @@ void draw() {
   
   for (int i = leaves.size() - 1; i >= 0; i--) {
     Leaf leaf = leaves.get(i);
-    leaf.updateLeaf();
+    leaf.updateLeaf(volume, direction);
     
     if (leaf.isOffScreen()) {
       leaves.remove(i);

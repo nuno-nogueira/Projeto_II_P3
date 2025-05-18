@@ -22,8 +22,10 @@ class Leaf {
     popMatrix();
   }
   
-  void updateLeaf() {
-   speed.x += random(-0.3, 0.3);
+  void updateLeaf(float volume, float direction) {
+    
+   float wind = map(volume, 0, 0.3, 0, 3);
+   speed.x += random(-0.2, 0.2) + wind * direction;
    speed.y += random(0.1, 0.3);
     
     //Adiciona um pouco de movimento lateral oscilante
