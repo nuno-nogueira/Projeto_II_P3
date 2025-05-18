@@ -1,10 +1,11 @@
-class Tree{
+class Tree{ //<>//
   PVector treePos;
-  float treeHeight, currentHeight, growthSpeed;
-  int branchesNumber, rootWidth;
+  float treeHeight, currentHeight, growthSpeed, fadeAlpha;
+  int branchesNumber, rootWidth, lifetime, currentLife;
   ArrayList<Branch> branches;
   color branchColor;
-  PImage leafImage, leaf;
+  PImage leaf;
+  boolean isAlive, isFading;
   
   Tree(float x, float y, color treeColor, PImage leafImage){
     treePos = new PVector(x, y);
@@ -16,6 +17,10 @@ class Tree{
     rootWidth = int(random(6, 8));
     branchColor = treeColor;
     leaf = leafImage;
+    lifetime = int(random(300, 600));
+    fadeAlpha = 255;
+    isAlive = true;
+    isFading = false;
     
     //Criar o nº de ramos estipulado
     for (int i = 0; i < branchesNumber; i++){
@@ -33,6 +38,21 @@ class Tree{
     Esta função desenha a parte do tronco da arvore
     */
     //Incrementar a velocidade de crescimento a altura da arvore ate a currentHeight chegaar à treeHeight
+    currentLife++;
+    
+    if (currentLife > lifetime && !isFading){ 
+        isFading = true;
+    }
+    
+    if (isFading){
+        fadeAlpha -= 10;
+        if (fadeAlpha < 0) {
+        isAlive = false;
+        return;
+        }
+    }
+    
+    
     if (currentHeight < treeHeight){
       currentHeight += growthSpeed;
     } else {
@@ -43,8 +63,7 @@ class Tree{
     pushMatrix();
     translate(treePos.x, treePos.y);
     
-    fill(80, 42, 42);
-    stroke(80, 42, 42);
+    stroke(branchColor, fadeAlpha);
     strokeWeight(rootWidth);
     line(0, 0, 0, -currentHeight);
     
@@ -52,7 +71,7 @@ class Tree{
     //Desenhar ramos
     for (Branch b : branches){
       if (currentHeight >= b.treeHeight){
-        b.growBranch();
+        b.growBranch(fadeAlpha);
       }
     
     }
@@ -83,7 +102,7 @@ class Branch{
     leafImage = leaf;
   }
   
-  void growBranch(){
+  void growBranch(float fadeAlpha){
     /*
     Esta funcao desenha um ramo primario (depois do desenho do tronco da arvore)
     */
@@ -115,15 +134,14 @@ class Branch{
       rotate(branchAngle - PI/2);
     }  
     
-    fill(80, 42, 42);
-    stroke(80, 42, 42);
+    stroke(branchColor, fadeAlpha);
     strokeWeight(3);
     line(0, 0, currentLength, 0);
     
     //Mover para a ponta do ramo para desenhar os sub-ramos
     translate(currentLength, 0);
     for (SubBranch branch : subBranches){
-      branch.growSubBranch();
+      branch.growSubBranch(fadeAlpha);
     }
     
     popMatrix();
@@ -147,7 +165,7 @@ class SubBranch{
     leafImage = leaf;
   }
   
-  void growSubBranch(){
+  void growSubBranch(float fadeAlpha){
     /*
     Esta funcao desenha um ramo secundario (depois do ramo primario) com umas folhas no final do ramo
     */
@@ -161,8 +179,7 @@ class SubBranch{
     pushMatrix();
     rotate(branchAngle);
     
-    fill(80, 42, 42);
-    stroke(80,42, 42);
+    stroke(branchColor, fadeAlpha);
     strokeWeight(2);
     line(0, 0, 0, -currentLength);
     
@@ -170,8 +187,10 @@ class SubBranch{
     translate(0, -currentLength);
     rotate(leafRotation);
     scale(leafSize);
-    imageMode(CENTER);
+    tint(255, fadeAlpha);
     image(leafImage, 0, 0);
+    noTint();
+    
     popMatrix();    
   }
 }

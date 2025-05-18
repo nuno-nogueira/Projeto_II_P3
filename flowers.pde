@@ -1,10 +1,10 @@
 class Flower {
   PVector rootPos;
   ArrayList<PVector> flowerPath;
-  float rootLength, growthSpeed, maxLength, flowerGrowthSpeed;
-  int petalCount, petalSize;
-  boolean growing;
+  float rootLength, growthSpeed, maxLength, flowerGrowthSpeed, fadeAlpha;
+  int petalCount, petalSize, lifetime, currentLife;
   color rootColor, petalColor, centerpieceColor;
+  boolean growing, isAlive, isFading;
   
   Flower(float x, float y, color flowerRoot, color leafColor1, color leafColor2) {
     rootPos = new PVector(x, y);
@@ -14,12 +14,17 @@ class Flower {
     growthSpeed = random(0.3, 1);
     maxLength = random(10, 20);
     flowerGrowthSpeed = random(0.3, 1);
-    growing = true;
     rootColor = flowerRoot;
     petalColor = leafColor1;
     centerpieceColor = leafColor2;
     petalCount = int(random(6, 13));
     petalSize = int(random(10, 16));
+    lifetime = int(random(300, 600));
+    fadeAlpha = 255;
+    isFading = false;
+    isAlive = true;
+    growing = true;
+
   }
   
   
@@ -28,7 +33,11 @@ class Flower {
     Esta função vai buscar as coordenadas de cada ponto guardado no array da raiz (flowerPath)
     e desenha uma linha com essas coordenadas
     */
-    stroke(rootColor, 200);
+    if (!isAlive) {
+      return;
+    }          
+    
+    stroke(rootColor, fadeAlpha);
     strokeWeight(4);
     
     //Iterar sobre o array para desenhar a raiz com as posicoesS
@@ -44,6 +53,25 @@ class Flower {
     Esta função adicionando novas coordenadas para a raiz ser desenhada
     ate a raiz chegar a sua altura maxima
     */
+    if(!isAlive) {
+      return;
+    }
+    
+    currentLife++;
+    
+    if (currentLife > lifetime && !isFading) {
+      isFading = true;
+    }
+    
+    if (isFading) {
+      fadeAlpha -= 10;
+      if (fadeAlpha <= 0) {
+        isAlive = false;
+        return;
+      }
+    }
+    
+    
     if (growing) {
       //Fazer a raiz da planta crescer ate chegar a sua altura maxima
       for (int i = 0; i < growthSpeed; i++) {
@@ -71,8 +99,7 @@ class Flower {
     translate(rootTip.x, rootTip.y);
     
     //petalas
-    fill(petalColor);
-    stroke(petalColor);
+    stroke(petalColor, fadeAlpha);
     
     for (int i = 0; i < petalCount; i++){
       float petalAngle = TWO_PI / petalCount * i;
@@ -92,8 +119,8 @@ class Flower {
     }
     
     //centro da flor
-    fill(centerpieceColor);
-    stroke(centerpieceColor);
+    fill(centerpieceColor, fadeAlpha);
+    stroke(centerpieceColor, fadeAlpha);
     ellipse(0, 0, 10, 10);
     popMatrix();
 

@@ -1,6 +1,5 @@
 boolean darkMode = false;
 boolean drawMode = true;
-boolean blur = false;
 color branchColor = color(80, 42, 42);
 color plantColor = color(60, 194, 60);
 color rootColor = color(60, 194, 60);
@@ -9,6 +8,7 @@ color leafColor2 = color(100, 50, 0);
 ArrayList<Tree> trees = new ArrayList<Tree>();
 ArrayList<Flower> flowers = new ArrayList<Flower>();
 ArrayList<Plant> plants = new ArrayList<Plant>(); 
+ArrayList<Leaf> leaves = new ArrayList<Leaf>();
 
 void mousePressed() {
   if (drawMode){
@@ -29,16 +29,6 @@ void mouseDragged() {
 }
 
 void keyPressed() {
-  if (key == 'l' || key == 'L'){
-    darkMode = !darkMode;
-    if (darkMode) {
-      background(0, 25);
-      noFill();
-    } else {
-      background(255, 25);
-    }
-  }
-
   if (key == 'p' || key == 'P'){
     drawMode = !drawMode;
   }
@@ -53,15 +43,7 @@ void keyPressed() {
       background(255, 25);
     }
   }
-  
-  if (key == 'b' || key == 'B') {
-    blur = !blur;
-    
-    if (blur) {
-      filter(BLUR, 1);
-    }
-  }
-  
+ 
    
   if (key == '1') {
     branchColor = color(80, 42, 42);
@@ -70,7 +52,7 @@ void keyPressed() {
     leafColor2 = color(100, 50, 0);
     plantColor = color(60, 194, 60);
     leafImage = loadImage("green_leaf.png");
-    //currentBg = loadImage("green_plain.jpg");
+    currentBg = loadImage("green_plain.jpg");
   } else if (key == '2') {
     branchColor = color(153, 115, 99);
     rootColor = color(74, 51, 27);
@@ -78,7 +60,7 @@ void keyPressed() {
     leafColor2 = color(138, 54, 104);
     plantColor = color(191, 80, 199);
     leafImage = loadImage("sakura_leaf.png");
-    //currentBg = loadImage("sakura_plain.jpg");
+    currentBg = loadImage("sakura_plain.jpg");
   } else if (key == '3') {
     branchColor = color(61, 41, 33);
     rootColor = color(149, 196, 94);
@@ -86,7 +68,7 @@ void keyPressed() {
     leafColor2 = color(255, 229, 180);
     plantColor = color(217, 145, 74);
     leafImage = loadImage("orange_leaf.png");
-    //currentBg = loadImage("orange_plain.jpeg");
+    currentBg = loadImage("orange_plain.jpeg");
   } else if (key == '4'){
     branchColor = color(130, 104, 94);
     rootColor = color(158, 222, 142);
@@ -94,6 +76,7 @@ void keyPressed() {
     leafColor2 = color(224, 197, 63);
     plantColor = color(123, 216, 224);
     leafImage = loadImage("white_leaf.png");
-    //currentBg = loadImage("winter_plain.jpg");
+    currentBg = loadImage("winter_plain.jpg");
   }
+  currentBg.resize(width, height);
  }
