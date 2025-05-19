@@ -3,11 +3,16 @@ import processing.sound.*;
 PImage leafImage, bgImage, currentBg;
 float posX, posY;
 int lastLeafTime = 0, leafInterval = 1000;
+ArrayList<Bird> birds = new ArrayList<Bird>();
 
 SoundFile soundFile;
 Amplitude amp;
 Amplitude micAmp;
 AudioIn mic;
+
+FFT fft;
+int bands = 512;
+float[] spectrum = new float[bands];
 
 void setup() {
   //Iniciar janela e atributos de janela
@@ -25,6 +30,8 @@ void setup() {
   mic.start();
   micAmp = new Amplitude(this);
   micAmp.input(mic);
+  fft = new FFT(this, bands);
+  fft.input(mic);
   
   leafImage = loadImage("green_leaf.png");
   bgImage = loadImage("green_plain.jpg");  
@@ -41,6 +48,7 @@ void draw() {
   float volume = amp.analyze();
   float direction = map(mouseX, 0, width, -1.0, 1.0);
   float micVolume = micAmp.analyze();
+  
 
 
    // Atualiza e desenha as árvores
@@ -53,8 +61,30 @@ void draw() {
       trees.remove(i);
     }
   }
+
+  fft.analyze(spectrum);
   
-  if (micVolume > 0.2) {
+  float low = 0;
+  float maxPeak = 0;
+  int maxIndex = 0;
+  for (int i = 0; i < bands; i++) {
+    if (i < bands * 0.2) low += spectrum[i];
+    if (spectrum[i] > maxPeak) {
+      maxPeak = spectrum[i];
+      maxIndex = i;
+    }
+  }
+
+  println("micVolume:", micVolume, "low:", low, "maxPeak:", maxPeak, "maxIndex:", maxIndex);
+
+  // Detect whistle: if the max peak is really high
+
+  if (maxIndex > 65) {
+    println("Whistle detected!");
+    birds.add(new Bird(-40, random(30, 120)));
+  }
+
+  if (low > 0.25 && maxPeak < 30 && micVolume > 0.3) {
     if (trees.size() > 0) {
       Tree t = trees.get(int(random(trees.size())));
       if (t.branches.size() > 0) {
@@ -63,6 +93,7 @@ void draw() {
       }
     }
   }
+  
   
   //Atualiza e desenha as flores
   for (int i = flowers.size() - 1; i >= 0; i--) {
@@ -93,6 +124,13 @@ void draw() {
     if (leaf.isOffScreen()) {
       leaves.remove(i);
     }
+  }
+
+  // Update and display birds
+  for (int i = birds.size()-1; i >= 0; i--) {
+    Bird b = birds.get(i);
+    b.update();
+    b.display();
   }
   
   // Cria novas folhas periodicamente
