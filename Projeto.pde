@@ -6,7 +6,8 @@ int lastLeafTime = 0, leafInterval = 1000;
 
 SoundFile soundFile;
 Amplitude amp;
-AudioIn in;
+Amplitude micAmp;
+AudioIn mic;
 
 void setup() {
   //Iniciar janela e atributos de janela
@@ -19,6 +20,11 @@ void setup() {
   
   amp = new Amplitude(this);
   amp.input(soundFile);
+  
+  mic = new AudioIn(this, 0);
+  mic.start();
+  micAmp = new Amplitude(this);
+  micAmp.input(mic);
   
   leafImage = loadImage("green_leaf.png");
   bgImage = loadImage("green_plain.jpg");  
@@ -34,8 +40,7 @@ void draw() {
   
   float volume = amp.analyze();
   float direction = map(mouseX, 0, width, -1.0, 1.0);
-  soundFile.pan(direction);
-  
+  float micVolume = micAmp.analyze();
 
 
    // Atualiza e desenha as árvores
@@ -46,6 +51,16 @@ void draw() {
     // Quando o ciclo de vida da arvore acabar, a arvore desaparece
     if (!t.isAlive) {
       trees.remove(i);
+    }
+  }
+  
+  if (micVolume > 0.3) {
+    if (trees.size() > 0) {
+      Tree t = trees.get(int(random(trees.size())));
+      if (t.branches.size() > 0) {
+        Branch b = t.branches.get(int(random(t.branches.size())));
+        b.isFalling = true;
+      }
     }
   }
   

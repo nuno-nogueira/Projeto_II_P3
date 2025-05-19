@@ -88,6 +88,9 @@ class Branch{
   ArrayList<SubBranch> subBranches;
   color branchColor;
   PImage leafImage;
+  boolean isFalling = false;
+  float fallY = 0;
+  float fallSpeed = 0;
   
   Branch(float height, float angle, float length, color treeColor, PImage leaf){
     treeHeight = height;
@@ -100,6 +103,9 @@ class Branch{
     subBranches = new ArrayList<SubBranch>();
     branchColor = treeColor;
     leafImage = leaf;
+    isFalling = false;
+    fallY = 0;
+    fallSpeed = 0;
   }
   
   void growBranch(float fadeAlpha){
@@ -121,11 +127,16 @@ class Branch{
         grown = true;
       }
     }
-    
+
+    // If falling, update fall position
+    if (isFalling) {
+      fallSpeed += 0.5; // gravity
+      fallY += fallSpeed;
+    }
     
     //Desenhar o ramo
     pushMatrix();
-    translate(0, -treeHeight);
+    translate(0, -treeHeight + fallY);
     
     //Verificar se o ramo vai crescer para o lado direito ou para o lado esquerdo
     if (branchSide == 0){
