@@ -106,6 +106,7 @@ class Branch{
     isFalling = false;
     fallY = 0;
     fallSpeed = 0;
+    
   }
   
   void growBranch(float fadeAlpha){

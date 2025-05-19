@@ -54,7 +54,7 @@ void draw() {
     }
   }
   
-  if (micVolume > 0.3) {
+  if (micVolume > 0.2) {
     if (trees.size() > 0) {
       Tree t = trees.get(int(random(trees.size())));
       if (t.branches.size() > 0) {
